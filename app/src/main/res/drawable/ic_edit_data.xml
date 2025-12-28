@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- Document background -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M6,4c-1.1,0 -2,0.9 -2,2v12c0,1.1 0.9,2 2,2h8c1.1,0 2,-0.9 2,-2V6c0,-1.1 -0.9,-2 -2,-2H6z" />
+    
+    <!-- Document lines -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M7,8h6v1H7V8z M7,10h6v1H7V10z M7,12h4v1H7V12z M7,14h3v1H7V14z" />
+    
+    <!-- Pencil -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M14.06,9.02l0.92,0.92L5.92,19H5v-0.92L14.06,9.02 M17.66,3c-0.25,0 -0.51,0.1 -0.7,0.29l-1.83,1.83l3.75,3.75l1.83,-1.83c0.39,-0.39 0.39,-1.02 0,-1.41l-2.34,-2.34C18.17,3.09 17.92,3 17.66,3L17.66,3z" />
+    
+    <!-- Pencil tip -->
+    <path
+        android:fillColor="#F57C00"
+        android:pathData="M15.02,9.96l0.92,0.92L6.88,19.94H5.96v-0.92L15.02,9.96z" />
+    
+    <!-- Edit indicator -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M19,17h-2v2h2V17z M19,13h-2v2h2V13z" />
+</vector>

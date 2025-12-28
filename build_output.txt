@@ -1,0 +1,66 @@
+Starting a Gradle Daemon, 1 incompatible and 11 stopped Daemons could not be reused, use --status for details
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:processDebugGoogleServices UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets UP-TO-DATE
+> Task :app:compressDebugAssets UP-TO-DATE
+> Task :app:checkDebugDuplicateClasses UP-TO-DATE
+> Task :app:desugarDebugFileDependencies UP-TO-DATE
+> Task :app:mergeExtDexDebug UP-TO-DATE
+> Task :app:mergeLibDexDebug UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :app:mergeDebugNativeLibs UP-TO-DATE
+> Task :app:stripDebugDebugSymbols UP-TO-DATE
+> Task :app:validateSigningDebug UP-TO-DATE
+> Task :app:writeDebugAppMetadata UP-TO-DATE
+> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :app:processDebugManifestForPackage
+> Task :app:processDebugResources
+
+> Task :app:compileDebugKotlin
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/data/repository/BleRepository.kt:125:44 'var value: ByteArray!' is deprecated. Deprecated in Java.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/data/repository/BleRepository.kt:148:18 'var value: ByteArray!' is deprecated. Deprecated in Java.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/data/repository/BleRepository.kt:149:18 'fun writeDescriptor(p0: BluetoothGattDescriptor!): Boolean' is deprecated. Deprecated in Java.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/data/repository/BleRepository.kt:158:12 'var value: ByteArray!' is deprecated. Deprecated in Java.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/data/repository/BleRepository.kt:159:20 'fun writeCharacteristic(p0: BluetoothGattCharacteristic!): Boolean' is deprecated. Deprecated in Java.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/ui/component/BalitaItem.kt:123:21 'fun Divider(modifier: Modifier = ..., thickness: Dp = ..., color: Color = ...): Unit' is deprecated. Renamed to HorizontalDivider.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/ui/screen/DetailBalitaScreen.kt:43:44 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/ui/screen/EditBalitaScreen.kt:68:44 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/ui/screen/ExportCsvScreen.kt:54:44 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/ui/screen/HomeScreen.kt:177:68 'val Icons.Filled.BluetoothSearching: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.BluetoothSearching.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/ui/screen/HomeScreen.kt:341:62 'val Icons.Filled.BluetoothSearching: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.BluetoothSearching.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/ui/screen/InputBalitaScreen.kt:121:44 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/ui/screen/InputBalitaScreen.kt:404:48 'val Icons.Filled.Note: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.Note.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/ui/screen/MainScreen.kt:47:53 'val Icons.Filled.List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/ui/screen/MainScreen.kt:73:53 'val Icons.Filled.TrendingUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.TrendingUp.
+w: file:///C:/Users/mmeyd/AndroidStudioProjects/E-POSYANDU/app/src/main/java/com/example/e_posyandu/ui/screen/PertumbuhanScreen.kt:50:44 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:processDebugJavaRes UP-TO-DATE
+> Task :app:mergeDebugJavaResource UP-TO-DATE
+> Task :app:dexBuilderDebug
+> Task :app:mergeProjectDexDebug
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
+
+BUILD SUCCESSFUL in 46s
+37 actionable tasks: 10 executed, 27 up-to-date
