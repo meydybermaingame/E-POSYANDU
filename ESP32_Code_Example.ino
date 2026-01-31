@@ -38,9 +38,9 @@
 // Definisi pin dan konstanta sudah dipindahkan ke bawah
 
 // BLE UUIDs
-#define BLE_SERVICE_UUID       "e8c15bd0-5f6d-4f0c-9f2a-1a2b3c4d5e60"
-#define BLE_DATA_CHAR_UUID     "e8c15bd1-5f6d-4f0c-9f2a-1a2b3c4d5e60" // Notify sensor data
-#define BLE_COMMAND_CHAR_UUID  "e8c15bd2-5f6d-4f0c-9f2a-1a2b3c4d5e60" // Write commands
+#define BLE_SERVICE_UUID       "xxxx"
+#define BLE_DATA_CHAR_UUID     "xxxx" // Notify sensor data
+#define BLE_COMMAND_CHAR_UUID  "xxxx" // Write commands
 
 // RGB LED pin (menggunakan LED RGB dengan satu pin kontrol)
 #define LED_RGB_PIN 8
