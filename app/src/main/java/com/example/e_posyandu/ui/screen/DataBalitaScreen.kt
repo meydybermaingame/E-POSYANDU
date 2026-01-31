@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.e_posyandu.data.repository.Balita
 import com.example.e_posyandu.ui.component.BalitaItem
@@ -90,11 +89,17 @@ private fun DataBalitaScreenContent(
         topBar = {
             TopAppBar(
                 title = { 
-                    Text("Data Balita", fontWeight = FontWeight.Bold, fontSize = 20.sp) 
+                    Text(
+                        "Data Balita", 
+                        fontWeight = FontWeight.Bold
+                    ) 
                 },
                 actions = {
                     IconButton(onClick = onNavigateToInput) {
-                        Icon(Icons.Default.Add, contentDescription = "Tambah Balita")
+                        Icon(
+                            Icons.Default.Add, 
+                            contentDescription = "Tambah Balita"
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -266,7 +271,7 @@ private fun DataBalitaScreenContent(
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(filteredBalitaList) { balita ->
                             BalitaItem(

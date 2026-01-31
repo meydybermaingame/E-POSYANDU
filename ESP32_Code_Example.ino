@@ -98,10 +98,12 @@ HX711 scale;
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 // Calibration values for Load Cell
-float calibration_factor = -7050; // Adjust this value for your load cell
-float known_weight = 1.0; // Known weight for calibration (kg)
-float weight_offset = 0.0f; // Offset kalibrasi untuk sensor berat (kg)
-float zero_factor = 0.0f; // Nilai pembacaan load cell saat kosong
+// CATATAN: Timbangan akan otomatis zero (tare) saat startup seperti timbangan digital pada umumnya
+// Untuk kalibrasi akurasi (opsional), gunakan perintah "calibrate" via Serial/BLE
+// Setelah dikalibrasi, catat nilai calibration_factor dan masukkan di sini untuk penggunaan permanen
+float calibration_factor = -7050; // Faktor kalibrasi (sesuaikan dengan load cell Anda)
+float known_weight = 1.0; // Berat yang diketahui untuk kalibrasi (kg)
+long zero_factor = 0; // Nilai pembacaan load cell saat kosong (auto-set saat startup)
 
 // Sensor tinggi configuration
 float sensor_height_frame = 150.0f; // Ketinggian rangka sensor tinggi (cm) - 1.5 meter
@@ -191,11 +193,21 @@ void setup() {
   setBrightness(50); // Atur kecerahan LED RGB
   
   // Initialize HX711 Load Cell
+  Serial.println("Initializing load cell...");
   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+  
+  // Set calibration factor
   scale.set_scale(calibration_factor);
-  scale.tare(); // Reset scale to 0
-  Serial.printf("Load cell initialized with calibration factor: %.2f\n", calibration_factor);
-  Serial.printf("Weight offset: %.2f\n", weight_offset);
+  
+  // Auto-tare: Reset scale to 0 (seperti timbangan digital pada umumnya)
+  Serial.println("Auto-zeroing scale (tare)...");
+  scale.tare(10); // Average 10 readings untuk akurasi lebih baik
+  zero_factor = scale.read_average(10); // Simpan nilai zero untuk referensi
+  
+  Serial.println("Load cell ready!");
+  Serial.printf("Calibration factor: %.2f\n", calibration_factor);
+  Serial.printf("Zero factor: %ld\n", zero_factor);
+  Serial.println("Scale automatically zeroed. Ready to weigh.");
   
   // Initialize VL53L0X sensor
   Wire.begin();
@@ -255,10 +267,8 @@ void setup() {
   // Set default LED brightness (0-255)
   setBrightness(50); // Atur kecerahan LED RGB
   
-  // Initialize HX711 Load Cell
-  scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
-  scale.set_scale(calibration_factor);
-  scale.tare(); // Reset scale to 0
+  // Initialize HX711 Load Cell (duplikat - sudah diinisialisasi di atas)
+  // Kode ini duplikat dan tidak perlu dijalankan lagi
   
   // Initialize VL53L0X sensor
   sensor.setTimeout(500);
@@ -361,9 +371,15 @@ void readSensors() {
 float readWeight() {
   // Read weight from HX711 Load Cell
   if (scale.is_ready()) {
-    float weight = scale.get_units(10); // Average of 10 readings
-    weight += weight_offset; // Tambahkan offset kalibrasi
-    return (weight > 0.0f) ? weight : 0.0f; // Ensure non-negative weight
+    // Baca berat (sudah otomatis di-zero karena tare saat startup)
+    float weight = scale.get_units(10); // Average of 10 readings untuk stabilitas
+    
+    // Pastikan nilai tidak negatif (noise kecil bisa menyebabkan nilai negatif kecil)
+    if (weight < 0.05f) { // Threshold 50 gram untuk menghindari noise
+      return 0.0f;
+    }
+    
+    return weight;
   } else {
     Serial.println("HX711 not ready");
     return 0.0f;
@@ -497,9 +513,9 @@ void calibrateLoadCell() {
   
   // Simpan nilai zero factor (pembacaan saat kosong)
   zero_factor = scale.read_average(10);
-  Serial.printf("Zero factor: %.2f\n", zero_factor);
+  Serial.printf("Zero factor: %ld\n", zero_factor);
   
-  scale.tare();
+  scale.tare(10); // Tare dengan 10 readings untuk akurasi
   Serial.println("Tare complete");
   
   lcd.setCursor(0, 1);
