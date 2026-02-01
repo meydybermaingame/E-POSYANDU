@@ -2,7 +2,10 @@ package com.example.e_posyandu.ui.screen
 
 import com.example.e_posyandu.data.model.toRiwayatModelList
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -12,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -129,55 +133,103 @@ private fun PertumbuhanScreenContent(
         }
     }
 
-    // Growth chart dialog
+    // Fullscreen chart view instead of dialog
     selectedBalita?.let { balita ->
-        AlertDialog(
-            onDismissRequest = { selectedBalita = null },
-            title = {
-                Text("Pertumbuhan ${balita.nama}")
-            },
-            text = {
-                Column {
-                    // Balita info
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp)
-                        ) {
-                            Text(
-                                text = "Informasi Balita",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text("Nama: ${balita.nama}")
-                            Text("Usia: ${balita.usia} tahun")
-                            Text("Berat Terakhir: ${balita.berat} kg")
-                            Text("Tinggi Terakhir: ${balita.tinggi} cm")
-                        }
-                    }
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                    // Growth chart
-                    KmsChart(
-                        riwayatList = balita.riwayat.toRiwayatModelList(),
-                        title = "Grafik Pertumbuhan KMS",
-                        jenisKelamin = if (balita.jenisKelamin.contains("Laki", ignoreCase = true)) "L" else "P",
-                        tanggalLahir = balita.tanggalLahir
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { selectedBalita = null }) {
-                    Text("Tutup")
-                }
-            }
+        FullscreenChartView(
+            balita = balita,
+            onDismiss = { selectedBalita = null }
         )
+    }
+}
+
+/**
+ * Fullscreen chart view optimized for landscape
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FullscreenChartView(
+    balita: Balita,
+    onDismiss: () -> Unit
+) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+    
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Grafik Pertumbuhan ${balita.nama}") },
+                navigationIcon = {
+                    IconButton(onClick = onDismiss) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Tutup")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        }
+    ) { padding ->
+        if (isLandscape) {
+            // Landscape: Chart fills entire screen with minimal padding
+            KmsChart(
+                riwayatList = balita.riwayat.toRiwayatModelList(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .background(MaterialTheme.colorScheme.surface),
+                height = null, // Use all available space
+                title = "", // Hide title in landscape to maximize space
+                jenisKelamin = if (balita.jenisKelamin.contains("Laki", ignoreCase = true)) "L" else "P",
+                tanggalLahir = balita.tanggalLahir
+            )
+        } else {
+            // Portrait: Scrollable with info card + chart
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                // Balita info card
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Informasi Balita",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("Nama: ${balita.nama}")
+                        Text("Usia: ${balita.usia} tahun")
+                        Text("Jenis Kelamin: ${balita.jenisKelamin}")
+                        Text("Berat Terakhir: ${balita.berat} kg")
+                        Text("Tinggi Terakhir: ${balita.tinggi} cm")
+                        Text("Total Riwayat: ${balita.riwayat.size} data")
+                    }
+                }
+                
+                // Growth chart
+                KmsChart(
+                    riwayatList = balita.riwayat.toRiwayatModelList(),
+                    height = 500.dp,  // Fixed height for portrait
+                    title = "Grafik Pertumbuhan KMS",
+                    jenisKelamin = if (balita.jenisKelamin.contains("Laki", ignoreCase = true)) "L" else "P",
+                    tanggalLahir = balita.tanggalLahir
+                )
+            }
+        }
     }
 }
 

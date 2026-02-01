@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.e_posyandu.data.model.Riwayat
@@ -22,6 +23,7 @@ import kotlin.math.roundToInt
 fun KmsChart(
     riwayatList: List<Riwayat>,
     modifier: Modifier = Modifier,
+    height: Dp? = null,  // NULL = fillMaxHeight, or specify Dp value
     title: String = "Kartu Menuju Sehat (KMS)",
     jenisKelamin: String = "L", // L untuk Laki-laki, P untuk Perempuan
     tanggalLahir: String = "" // Tanggal lahir untuk menghitung usia
@@ -44,32 +46,47 @@ fun KmsChart(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        
-        Text(
-            text = "Berat Badan Menurut Usia (${if (jenisKelamin == "L") "Laki-laki" else "Perempuan"})",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        // Only show title if it's not empty
+        if (title.isNotEmpty()) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            
+            Text(
+                text = "Berat Badan Menurut Usia (${if (jenisKelamin == "L") "Laki-laki" else "Perempuan"})",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
 
-        // Chart container
+        // Chart container with responsive height
+        val isFullscreen = height == null
+        val chartPadding = if (isFullscreen) 4.dp else 16.dp
+        
+        val cardModifier = Modifier
+            .fillMaxWidth()
+            .let { modifier ->
+                // If height is specified, use it; otherwise fillMaxHeight
+                height?.let { h ->
+                    modifier.height(h)
+                } ?: modifier.fillMaxHeight()
+            }
+            .padding(chartPadding)
+        
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(500.dp)
-                .padding(16.dp),
+            modifier = cardModifier,
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
+            val internalPadding = if (isFullscreen) 4.dp else 16.dp
+            
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(internalPadding)
             ) {
                 // Chart
                 Box(

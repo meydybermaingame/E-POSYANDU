@@ -28,6 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.e_posyandu.ui.theme.EPOSYANDUTheme
+import com.example.e_posyandu.ui.utils.rememberResponsiveValues
 import com.example.e_posyandu.ui.viewmodel.BalitaViewModel
 import androidx.compose.ui.platform.LocalContext
 import com.example.e_posyandu.data.repository.BleRepository
@@ -60,12 +62,19 @@ fun HomeScreen(
     val connectionStatus by viewModel.connectionStatus.collectAsState()
     val isConnecting by viewModel.isConnecting.collectAsState()
     
+    // Snackbar state for notifications
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    
     // State untuk menampilkan dialog konfirmasi
     var showDummyDataDialog by remember { mutableStateOf(false) }
     var isGeneratingData by remember { mutableStateOf(false) }
     var showSuccessMessage by remember { mutableStateOf(false) }
     val errorMessage by viewModel.errorMessage.collectAsState()
     val successMessage by viewModel.successMessage.collectAsState()
+    
+    // Responsive values for adaptive layout
+    val responsiveValues = rememberResponsiveValues()
     
     // Determine connection state
     val isConnected = connectionStatus == "connected"
@@ -127,18 +136,24 @@ fun HomeScreen(
         )
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        Color(0xFF006064),
-                        Color(0xFF00695C)
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+        containerColor = Color.Transparent
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.tertiary
+                        )
                     )
                 )
-            )
-    ) {
+        ) {
         // Enhanced TopAppBar with connection indicator
         TopAppBar(
             title = {
@@ -233,7 +248,7 @@ fun HomeScreen(
                         .shadow(8.dp, CircleShape),
                     shape = CircleShape,
                     colors = CardDefaults.cardColors(
-                        containerColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.surface
                     )
                 ) {
                     Box(
@@ -244,13 +259,13 @@ fun HomeScreen(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Admin Profile",
                             modifier = Modifier.size(28.dp),
-                            tint = Color(0xFF006064)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color(0xFF006064)
+                containerColor = MaterialTheme.colorScheme.primary
             )
         )
         
@@ -263,16 +278,38 @@ fun HomeScreen(
             val bleRepo = remember { BleRepository(context) }
             val bleConnected by bleRepo.connectionState.collectAsState(initial = false)
             val bleReading by bleRepo.sensorData.collectAsState(initial = null)
+            
+            // Track previous connection state to detect failures
+            var previousBleConnected by remember { mutableStateOf(false) }
+            
+            // Show snackbar when connection fails
+            LaunchedEffect(bleConnected) {
+                // If we tried to connect (was trying) and failed (not connected)
+                if (previousBleConnected && !bleConnected) {
+                    val result = snackbarHostState.showSnackbar(
+                        message = "Gagal terhubung ke perangkat ESP32",
+                        actionLabel = "Coba Lagi",
+                        duration = SnackbarDuration.Short
+                    )
+                    if (result == SnackbarResult.ActionPerformed) {
+                        bleRepo.startScan()
+                    }
+                }
+                previousBleConnected = bleConnected
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .shadow(8.dp, RoundedCornerShape(16.dp)),
-                shape = RoundedCornerShape(16.dp),
+                    .shadow(8.dp, MaterialTheme.shapes.medium),
+                shape = MaterialTheme.shapes.medium,
                 colors = CardDefaults.cardColors(
-                    containerColor = if (bleConnected) Color(0xFFE8F5E9) else Color.White
+                    containerColor = when {
+                        bleConnected -> MaterialTheme.colorScheme.primaryContainer
+                        else -> MaterialTheme.colorScheme.surface
+                    }
                 )
             ) {
                 Column(
@@ -333,7 +370,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = MaterialTheme.shapes.small,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (bleConnected) Color(0xFFF44336) else Color(0xFF4CAF50)
                         )
@@ -361,7 +398,7 @@ fun HomeScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = MaterialTheme.shapes.small
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Build,
@@ -415,8 +452,8 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .shadow(4.dp, RoundedCornerShape(12.dp)),
-                shape = RoundedCornerShape(12.dp),
+                    .shadow(4.dp, MaterialTheme.shapes.medium),
+                shape = MaterialTheme.shapes.medium,
                 colors = CardDefaults.cardColors(
                     containerColor = if (errorMessage != null) Color(0xFFFFEBEE) else Color(0xFFE8F5E8)
                 )
@@ -452,14 +489,14 @@ fun HomeScreen(
             modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
         )
         
-        // Enhanced Grid Menu with animations
+        // Enhanced Grid Menu with responsive columns
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Fixed(responsiveValues.gridColumns),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(horizontal = responsiveValues.horizontalPadding),
+            horizontalArrangement = Arrangement.spacedBy(responsiveValues.cardSpacing),
+            verticalArrangement = Arrangement.spacedBy(responsiveValues.cardSpacing)
         ) {
             items(menuList) { menu ->
                 AnimatedVisibility(
@@ -479,9 +516,9 @@ fun HomeScreen(
                             .height(160.dp)
                             .shadow(
                                 elevation = 8.dp,
-                                shape = RoundedCornerShape(20.dp)
+                                shape = MaterialTheme.shapes.large
                             ),
-                        shape = RoundedCornerShape(20.dp),
+                        shape = MaterialTheme.shapes.large,
                         colors = CardDefaults.cardColors(
                             containerColor = Color.White
                         )
@@ -525,6 +562,7 @@ fun HomeScreen(
         }
         
         Spacer(modifier = Modifier.height(24.dp))
+        }
     }
     
     // Dialog konfirmasi untuk generate data dummy

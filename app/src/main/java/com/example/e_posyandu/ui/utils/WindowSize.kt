@@ -15,6 +15,9 @@ data class ResponsiveValues(
     val iconSize: Dp,
     val horizontalPadding: Dp,
     val cardSpacing: Dp,
+    val gridColumns: Int,        // Grid columns: 2 for portrait, 4 for landscape
+    val menuItemHeight: Dp,      // Menu card height: 160dp portrait, 120dp landscape
+    val chartHeight: Dp,         // Chart height: 500dp portrait, 400dp landscape
     val isLandscape: Boolean,
     val isTablet: Boolean
 )
@@ -42,6 +45,9 @@ fun rememberResponsiveValues(): ResponsiveValues {
             iconSize = 24.dp,
             horizontalPadding = 16.dp,
             cardSpacing = 12.dp,
+            gridColumns = 2,
+            menuItemHeight = 160.dp,
+            chartHeight = 500.dp,
             isLandscape = false,
             isTablet = false
         )
@@ -54,6 +60,9 @@ fun rememberResponsiveValues(): ResponsiveValues {
             iconSize = 28.dp,
             horizontalPadding = 24.dp,
             cardSpacing = 16.dp,
+            gridColumns = if (isLandscape) 4 else 2,
+            menuItemHeight = if (isLandscape) 120.dp else 160.dp,
+            chartHeight = if (isLandscape) 400.dp else 500.dp,
             isLandscape = isLandscape,
             isTablet = screenWidth >= 600.dp
         )
@@ -66,6 +75,9 @@ fun rememberResponsiveValues(): ResponsiveValues {
             iconSize = 32.dp,
             horizontalPadding = 32.dp,
             cardSpacing = 20.dp,
+            gridColumns = 4,
+            menuItemHeight = 140.dp,
+            chartHeight = 450.dp,
             isLandscape = true,
             isTablet = true
         )

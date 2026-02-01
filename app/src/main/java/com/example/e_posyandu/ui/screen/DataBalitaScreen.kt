@@ -134,7 +134,7 @@ private fun DataBalitaScreenContent(
                     onValueChange = { searchQuery = it },
                     label = { Text("Cari balita...") },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(12.dp),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF006064),
@@ -240,32 +240,32 @@ private fun DataBalitaScreenContent(
                     }
                 }
                 else -> {
-                    // Statistics Card
+                    // Statistics Card - Compact
                     Card(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).shadow(8.dp),
-                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).shadow(4.dp),
+                        shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(containerColor = Color.White)
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            modifier = Modifier.fillMaxWidth().padding(12.dp),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("${filteredBalitaList.size}", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = Color(0xFF006064))
-                                Text("Total Balita", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                                Text("${filteredBalitaList.size}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color(0xFF006064))
+                                Text("Total Balita", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("${filteredBalitaList.count { it.usia <= 2 }}", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = Color(0xFF4CAF50))
-                                Text("Usia 0-2 Tahun", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                                Text("${filteredBalitaList.count { it.usia <= 2 }}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color(0xFF4CAF50))
+                                Text("Usia 0-2 Tahun", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("${filteredBalitaList.count { it.usia > 2 }}", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = Color(0xFFFF9800))
-                                Text("Usia 3-5 Tahun", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                                Text("${filteredBalitaList.count { it.usia > 2 }}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color(0xFFFF9800))
+                                Text("Usia 3-5 Tahun", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                             }
                         }
                     }
                     
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     
                     // Balita List
                     LazyColumn(

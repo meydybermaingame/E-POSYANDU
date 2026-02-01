@@ -193,6 +193,7 @@ private fun DetailBalitaScreenContent(
                         // Growth chart
                         KmsChart(
                             riwayatList = balita.riwayat.toRiwayatModelList(),
+                            height = 500.dp,  // Fixed height
                             title = "Grafik Pertumbuhan KMS ${balita.nama}",
                             jenisKelamin = if (balita.jenisKelamin.contains("Laki", ignoreCase = true)) "L" else "P",
                             tanggalLahir = balita.tanggalLahir
