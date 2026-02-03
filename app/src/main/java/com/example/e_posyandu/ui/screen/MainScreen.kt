@@ -1,15 +1,22 @@
 package com.example.e_posyandu.ui.screen
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -81,53 +88,208 @@ private fun MainScreenContent(navController: NavHostController) {
     val startDestination = Destination.HOME
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
     
-    Scaffold(
-        bottomBar = {
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                windowInsets = NavigationBarDefaults.windowInsets
-            ) {
-                Destination.entries.forEachIndexed { index, destination ->
-                    NavigationBarItem(
-                        selected = selectedDestination == index,
-                        onClick = {
-                            navController.navigate(route = destination.route) {
-                                // Pop up to start destination to avoid building up a large stack
-                                popUpTo(startDestination.route) {
-                                    saveState = true
-                                }
-                                // Avoid multiple copies of the same destination
-                                launchSingleTop = true
-                                // Restore state when reselecting a previously selected item
-                                restoreState = true
-                            }
-                            selectedDestination = index
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = destination.icon,
-                                contentDescription = destination.contentDescription
-                            )
-                        },
-                        label = { Text(destination.label) },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                            selectedTextColor = MaterialTheme.colorScheme.onPrimary,
-                            unselectedIconColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
-                            unselectedTextColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
-                            indicatorColor = MaterialTheme.colorScheme.tertiary
-                        )
-                    )
-                }
-            }
-        }
-    ) { contentPadding ->
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Main content
         AppNavHost(
             navController = navController,
             startDestination = startDestination,
-            modifier = Modifier.padding(contentPadding)
+            modifier = Modifier.fillMaxSize()
         )
+        
+        // Floating Bottom App Bar - positioned absolutely at the bottom
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+        ) {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                shadowElevation = 12.dp,
+                color = Color.White
+            ) {
+                BottomAppBar(
+                    containerColor = Color.Transparent,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.fillMaxWidth(),
+                    actions = {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // Home
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clickable {
+                                        navController.navigate(route = Destination.HOME.route) {
+                                            popUpTo(startDestination.route) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                        selectedDestination = Destination.HOME.ordinal
+                                    }
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    Destination.HOME.icon,
+                                    contentDescription = Destination.HOME.contentDescription,
+                                    tint = if (selectedDestination == Destination.HOME.ordinal) 
+                                        MaterialTheme.colorScheme.primary 
+                                    else 
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Home",
+                                    fontSize = 10.sp,
+                                    color = if (selectedDestination == Destination.HOME.ordinal) 
+                                        MaterialTheme.colorScheme.primary 
+                                    else 
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                                )
+                            }
+                            
+                            // Data Balita
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clickable {
+                                        navController.navigate(route = Destination.DATA_BALITA.route) {
+                                            popUpTo(startDestination.route) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                        selectedDestination = Destination.DATA_BALITA.ordinal
+                                    }
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    Destination.DATA_BALITA.icon,
+                                    contentDescription = Destination.DATA_BALITA.contentDescription,
+                                    tint = if (selectedDestination == Destination.DATA_BALITA.ordinal) 
+                                        MaterialTheme.colorScheme.primary 
+                                    else 
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Data",
+                                    fontSize = 10.sp,
+                                    color = if (selectedDestination == Destination.DATA_BALITA.ordinal) 
+                                        MaterialTheme.colorScheme.primary 
+                                    else 
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                                )
+                            }
+                            
+                            // Input Balita
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clickable {
+                                        navController.navigate(route = Destination.INPUT.route) {
+                                            popUpTo(startDestination.route) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                        selectedDestination = Destination.INPUT.ordinal
+                                    }
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    Destination.INPUT.icon,
+                                    contentDescription = Destination.INPUT.contentDescription,
+                                    tint = if (selectedDestination == Destination.INPUT.ordinal) 
+                                        MaterialTheme.colorScheme.primary 
+                                    else 
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Input",
+                                    fontSize = 10.sp,
+                                    color = if (selectedDestination == Destination.INPUT.ordinal) 
+                                        MaterialTheme.colorScheme.primary 
+                                    else 
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                                )
+                            }
+                            
+                            // Growth/Pertumbuhan
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clickable {
+                                        navController.navigate(route = Destination.GROWTH.route) {
+                                            popUpTo(startDestination.route) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                        selectedDestination = Destination.GROWTH.ordinal
+                                    }
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    Destination.GROWTH.icon,
+                                    contentDescription = Destination.GROWTH.contentDescription,
+                                    tint = if (selectedDestination == Destination.GROWTH.ordinal) 
+                                        MaterialTheme.colorScheme.primary 
+                                    else 
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Tumbuh",
+                                    fontSize = 10.sp,
+                                    color = if (selectedDestination == Destination.GROWTH.ordinal) 
+                                        MaterialTheme.colorScheme.primary 
+                                    else 
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                                )
+                            }
+                        }
+                    },
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = {
+                            navController.navigate(route = Destination.EXPORT.route) {
+                                popUpTo(startDestination.route) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                            selectedDestination = Destination.EXPORT.ordinal
+                        },
+                        containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
+                    ) {
+                        Icon(
+                            Destination.EXPORT.icon,
+                            contentDescription = Destination.EXPORT.contentDescription
+                        )
+                    }
+                }
+            )
+            }
+        }
     }
 }
 
@@ -220,41 +382,89 @@ private fun AppNavHost(
 private fun MainScreenPreviewContent() {
     val selectedIndex = 0
     
-    Scaffold(
-        bottomBar = {
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Destination.entries.forEachIndexed { index, destination ->
-                    NavigationBarItem(
-                        icon = { 
-                            Icon(
-                                destination.icon, 
-                                contentDescription = destination.contentDescription
-                            ) 
-                        },
-                        label = { Text(destination.label) },
-                        selected = selectedIndex == index,
-                        onClick = { },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                            selectedTextColor = MaterialTheme.colorScheme.onPrimary,
-                            unselectedIconColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
-                            unselectedTextColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
-                            indicatorColor = MaterialTheme.colorScheme.tertiary
-                        )
-                    )
-                }
-            }
-        }
-    ) { paddingValues ->
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Content placeholder
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
         ) {
             Text("Main Content Placeholder")
+        }
+        
+        // Floating Bottom App Bar - positioned absolutely at the bottom
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+        ) {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                shadowElevation = 12.dp,
+                color = Color.White
+            ) {
+                BottomAppBar(
+                    containerColor = Color.Transparent,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.fillMaxWidth(),
+                    actions = {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Destination.entries.take(4).forEachIndexed { index, destination ->
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.padding(8.dp)
+                                ) {
+                                    Icon(
+                                        destination.icon,
+                                        contentDescription = destination.contentDescription,
+                                        tint = if (selectedIndex == index)
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = when (destination) {
+                                            Destination.HOME -> "Home"
+                                            Destination.DATA_BALITA -> "Data"
+                                            Destination.INPUT -> "Input"
+                                            Destination.GROWTH -> "Tumbuh"
+                                            else -> ""
+                                        },
+                                        fontSize = 10.sp,
+                                        color = if (selectedIndex == index)
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    floatingActionButton = {
+                        FloatingActionButton(
+                            onClick = { /* preview only */ },
+                            containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                            elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
+                        ) {
+                            Icon(
+                                Destination.EXPORT.icon,
+                                contentDescription = Destination.EXPORT.contentDescription
+                            )
+                        }
+                    }
+                )
+            }
         }
     }
 }

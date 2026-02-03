@@ -6,6 +6,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -269,299 +271,264 @@ fun HomeScreen(
             )
         )
         
-        Spacer(modifier = Modifier.height(16.dp))
         
-        
-        // Panel BLE untuk koneksi langsung ke ESP32 via Bluetooth
-        run {
-            val context = LocalContext.current
-            val bleRepo = remember { BleRepository(context) }
-            val bleConnected by bleRepo.connectionState.collectAsState(initial = false)
-            val bleReading by bleRepo.sensorData.collectAsState(initial = null)
-            
-            // Track previous connection state to detect failures
-            var previousBleConnected by remember { mutableStateOf(false) }
-            
-            // Show snackbar when connection fails
-            LaunchedEffect(bleConnected) {
-                // If we tried to connect (was trying) and failed (not connected)
-                if (previousBleConnected && !bleConnected) {
-                    val result = snackbarHostState.showSnackbar(
-                        message = "Gagal terhubung ke perangkat ESP32",
-                        actionLabel = "Coba Lagi",
-                        duration = SnackbarDuration.Short
-                    )
-                    if (result == SnackbarResult.ActionPerformed) {
-                        bleRepo.startScan()
+        // Use LazyColumn untuk menggabungkan semua konten dalam satu scrollable area
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 100.dp) // Extra padding for floating navbar
+        ) {
+            // Panel BLE untuk koneksi langsung ke ESP32 via Bluetooth
+            item {
+                run {
+                    val context = LocalContext.current
+                    val bleRepo = remember { BleRepository(context) }
+                    val bleConnected by bleRepo.connectionState.collectAsState(initial = false)
+                    val bleReading by bleRepo.sensorData.collectAsState(initial = null)
+                    
+                    // Track previous connection state to detect failures
+                    var previousBleConnected by remember { mutableStateOf(false) }
+                    
+                    // Show snackbar when connection fails
+                    LaunchedEffect(bleConnected) {
+                        // If we tried to connect (was trying) and failed (not connected)
+                        if (previousBleConnected && !bleConnected) {
+                            val result = snackbarHostState.showSnackbar(
+                                message = "Gagal terhubung ke perangkat ESP32",
+                                actionLabel = "Coba Lagi",
+                                duration = SnackbarDuration.Short
+                            )
+                            if (result == SnackbarResult.ActionPerformed) {
+                                bleRepo.startScan()
+                            }
+                        }
+                        previousBleConnected = bleConnected
                     }
-                }
-                previousBleConnected = bleConnected
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .shadow(8.dp, MaterialTheme.shapes.medium),
-                shape = MaterialTheme.shapes.medium,
-                colors = CardDefaults.cardColors(
-                    containerColor = when {
-                        bleConnected -> MaterialTheme.colorScheme.primaryContainer
-                        else -> MaterialTheme.colorScheme.surface
-                    }
-                )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Icon Bluetooth besar di tengah
-                    Box(
-                        modifier = Modifier
-                            .size(64.dp)
-                            .background(
-                                color = if (bleConnected) Color(0xFF4CAF50).copy(alpha = 0.1f) 
-                                        else Color(0xFF9E9E9E).copy(alpha = 0.1f),
-                                shape = CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = if (bleConnected) Icons.Default.BluetoothConnected 
-                                          else Icons.Default.Bluetooth,
-                            contentDescription = null,
-                            tint = if (bleConnected) Color(0xFF4CAF50) else Color(0xFF9E9E9E),
-                            modifier = Modifier.size(36.dp)
-                        )
-                    }
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                    // Status Text
-                    Text(
-                        text = if (bleConnected) "Alat Terhubung" else "Alat Belum Tersambung",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = if (bleConnected) Color(0xFF4CAF50) else Color(0xFF757575),
-                        textAlign = TextAlign.Center
-                    )
-                    
-                    Spacer(modifier = Modifier.height(4.dp))
-                    
-                    Text(
-                        text = if (bleConnected) "ESP32 siap digunakan via Bluetooth" 
-                               else "Klik tombol di bawah untuk menghubungkan",
-                        fontSize = 14.sp,
-                        color = Color.Gray,
-                        textAlign = TextAlign.Center
-                    )
-                    
-                    Spacer(modifier = Modifier.height(20.dp))
-                    
-                    // Tombol utama (Scan/Disconnect)
-                    Button(
-                        onClick = { 
-                            if (bleConnected) bleRepo.disconnect() 
-                            else bleRepo.startScan() 
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp),
-                        shape = MaterialTheme.shapes.small,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (bleConnected) Color(0xFFF44336) else Color(0xFF4CAF50)
-                        )
-                    ) {
-                        Icon(
-                            imageVector = if (bleConnected) Icons.Default.PowerSettingsNew 
-                                          else Icons.Default.BluetoothSearching,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = if (bleConnected) "Putuskan Koneksi" else "Hubungkan Alat",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    
-                    // Tombol Kalibrasi hanya muncul jika terhubung
-                    if (bleConnected) {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        OutlinedButton(
-                            onClick = { bleRepo.sendCommand("calibrate") },
+                    Column {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(48.dp),
-                            shape = MaterialTheme.shapes.small
+                                .padding(horizontal = 16.dp)
+                                .shadow(4.dp, MaterialTheme.shapes.medium),
+                            shape = MaterialTheme.shapes.medium,
+                            colors = CardDefaults.cardColors(
+                                containerColor = when {
+                                    bleConnected -> MaterialTheme.colorScheme.primaryContainer
+                                    else -> MaterialTheme.colorScheme.surface
+                                }
+                            )
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                // Left side - Icon and Status
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .background(
+                                                color = if (bleConnected) Color(0xFF4CAF50).copy(alpha = 0.15f) 
+                                                        else Color(0xFF9E9E9E).copy(alpha = 0.15f),
+                                                shape = CircleShape
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = if (bleConnected) Icons.Default.BluetoothConnected 
+                                                          else Icons.Default.Bluetooth,
+                                            contentDescription = null,
+                                            tint = if (bleConnected) Color(0xFF4CAF50) else Color(0xFF9E9E9E),
+                                            modifier = Modifier.size(22.dp)
+                                        )
+                                    }
+                                    
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    
+                                    Column {
+                                        Text(
+                                            text = if (bleConnected) "Alat Terhubung" else "Alat Belum Tersambung",
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 14.sp,
+                                            color = if (bleConnected) Color(0xFF4CAF50) else Color(0xFF757575)
+                                        )
+                                        if (bleReading != null) {
+                                            Text(
+                                                text = "${String.format("%.1f", bleReading!!.beratKg)} kg • ${String.format("%.0f", bleReading!!.tinggiCm)} cm",
+                                                fontSize = 12.sp,
+                                                color = Color.Gray
+                                            )
+                                        }
+                                    }
+                                }
+                                
+                                // Right side - Action button
+                                FilledTonalButton(
+                                    onClick = { 
+                                        if (bleConnected) bleRepo.disconnect() 
+                                        else bleRepo.startScan() 
+                                    },
+                                    modifier = Modifier.height(36.dp),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = ButtonDefaults.filledTonalButtonColors(
+                                        containerColor = if (bleConnected) Color(0xFFF44336).copy(alpha = 0.1f) else Color(0xFF4CAF50).copy(alpha = 0.1f),
+                                        contentColor = if (bleConnected) Color(0xFFF44336) else Color(0xFF4CAF50)
+                                    )
+                                ) {
+                                    Icon(
+                                        imageVector = if (bleConnected) Icons.Default.PowerSettingsNew 
+                                                      else Icons.Default.BluetoothSearching,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = if (bleConnected) "Putus" else "Hubungkan",
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Show error/success messages
+            item {
+                AnimatedVisibility(
+                    visible = errorMessage != null || successMessage != null,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .shadow(4.dp, MaterialTheme.shapes.medium),
+                        shape = MaterialTheme.shapes.medium,
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (errorMessage != null) Color(0xFFFFEBEE) else Color(0xFFE8F5E8)
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Build,
+                                imageVector = if (errorMessage != null) Icons.Default.Error else Icons.Default.CheckCircle,
                                 contentDescription = null,
+                                tint = if (errorMessage != null) Color(0xFFF44336) else Color(0xFF4CAF50),
                                 modifier = Modifier.size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Kalibrasi Sensor", fontWeight = FontWeight.Medium)
-                        }
-                    }
-
-                    if (bleReading != null) {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        HorizontalDivider()
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "Berat Badan", fontSize = 12.sp, color = Color.Gray)
-                                Text(
-                                    text = String.format("%.2f kg", bleReading!!.beratKg),
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF4CAF50)
-                                )
-                            }
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "Tinggi Badan", fontSize = 12.sp, color = Color.Gray)
-                                Text(
-                                    text = String.format("%.1f cm", bleReading!!.tinggiCm),
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF2196F3)
-                                )
-                            }
+                            Text(
+                                text = errorMessage ?: successMessage ?: "",
+                                fontSize = 14.sp,
+                                color = if (errorMessage != null) Color(0xFFD32F2F) else Color(0xFF2E7D32)
+                            )
                         }
                     }
                 }
             }
-        }
-
-        // Show error/success messages
-        AnimatedVisibility(
-            visible = errorMessage != null || successMessage != null,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
-        ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .shadow(4.dp, MaterialTheme.shapes.medium),
-                shape = MaterialTheme.shapes.medium,
-                colors = CardDefaults.cardColors(
-                    containerColor = if (errorMessage != null) Color(0xFFFFEBEE) else Color(0xFFE8F5E8)
+            
+            // Section header
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    "Fitur Layanan",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.padding(start = 16.dp, bottom = 12.dp)
                 )
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = if (errorMessage != null) Icons.Default.Error else Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = if (errorMessage != null) Color(0xFFF44336) else Color(0xFF4CAF50),
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = errorMessage ?: successMessage ?: "",
-                        fontSize = 14.sp,
-                        color = if (errorMessage != null) Color(0xFFD32F2F) else Color(0xFF2E7D32)
-                    )
-                }
             }
-        }
-        
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        // Enhanced title
-        Text(
-            "Fitur Layanan",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
-        )
-        
-        // Enhanced Grid Menu with responsive columns
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(responsiveValues.gridColumns),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = responsiveValues.horizontalPadding),
-            horizontalArrangement = Arrangement.spacedBy(responsiveValues.cardSpacing),
-            verticalArrangement = Arrangement.spacedBy(responsiveValues.cardSpacing)
-        ) {
-            items(menuList) { menu ->
-                AnimatedVisibility(
-                    visible = true,
-                    enter = fadeIn() + expandVertically()
+            
+            // Menu grid items
+            items(menuList.chunked(responsiveValues.gridColumns)) { rowItems ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = responsiveValues.horizontalPadding),
+                    horizontalArrangement = Arrangement.spacedBy(responsiveValues.cardSpacing)
                 ) {
-                    Card(
-                        onClick = { 
-                            if (menu.label == "Data Demo") {
-                                showDummyDataDialog = true
-                            } else {
-                                onMenuClick(menu)
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(160.dp)
-                            .shadow(
-                                elevation = 8.dp,
-                                shape = MaterialTheme.shapes.large
-                            ),
-                        shape = MaterialTheme.shapes.large,
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        )
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(menu.gradient)
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
+                    rowItems.forEach { menu ->
+                        AnimatedVisibility(
+                            visible = true,
+                            enter = fadeIn() + expandVertically(),
+                            modifier = Modifier.weight(1f)
                         ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
+                            Card(
+                                onClick = { 
+                                    if (menu.label == "Data Demo") {
+                                        showDummyDataDialog = true
+                                    } else {
+                                        onMenuClick(menu)
+                                    }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(160.dp)
+                                    .shadow(
+                                        elevation = 8.dp,
+                                        shape = MaterialTheme.shapes.large
+                                    ),
+                                shape = MaterialTheme.shapes.large,
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color.White
+                                )
                             ) {
-                                Image(
-                                    painter = painterResource(id = menu.icon),
-                                    contentDescription = menu.label,
-                                    modifier = Modifier.size(48.dp)
-                                )
-                                Spacer(modifier = Modifier.height(12.dp))
-                                Text(
-                                    menu.label,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    textAlign = TextAlign.Center,
-                                    color = Color.White
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    menu.description,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    textAlign = TextAlign.Center,
-                                    color = Color.White.copy(alpha = 0.8f)
-                                )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(menu.gradient)
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = menu.icon),
+                                            contentDescription = menu.label,
+                                            modifier = Modifier.size(48.dp)
+                                        )
+                                        Spacer(modifier = Modifier.height(12.dp))
+                                        Text(
+                                            menu.label,
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            textAlign = TextAlign.Center,
+                                            color = Color.White
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            menu.description,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            textAlign = TextAlign.Center,
+                                            color = Color.White.copy(alpha = 0.8f)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
+                    // Fill remaining slots with empty space
+                    repeat(responsiveValues.gridColumns - rowItems.size) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
                 }
+                Spacer(modifier = Modifier.height(responsiveValues.cardSpacing))
             }
         }
-        
-        Spacer(modifier = Modifier.height(24.dp))
         }
     }
     
