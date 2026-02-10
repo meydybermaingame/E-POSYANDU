@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.e_posyandu.data.repository.Balita
 import com.example.e_posyandu.ui.viewmodel.BalitaViewModel
+import android.os.Environment
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -255,7 +256,7 @@ private fun ExportCsvScreenContent(
                 else -> {}
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Export button
             Button(
@@ -291,7 +292,9 @@ private fun exportBalitaToCsv(context: Context, balitaList: List<Balita>): Strin
         }
     }
     
-    val file = File(context.getExternalFilesDir(null), fileName)
+    val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+    if (!downloadsDir.exists()) downloadsDir.mkdirs()
+    val file = File(downloadsDir, fileName)
     FileOutputStream(file).use { it.write(csvContent.toByteArray()) }
     
     return file.absolutePath

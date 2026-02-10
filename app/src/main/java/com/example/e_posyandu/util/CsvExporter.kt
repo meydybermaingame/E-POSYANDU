@@ -1,6 +1,7 @@
 package com.example.e_posyandu.util
 
 import android.content.Context
+import android.os.Environment
 import com.example.e_posyandu.data.model.Balita
 import com.opencsv.CSVWriter
 import java.io.File
@@ -13,7 +14,9 @@ class CsvExporter {
         fun exportBalitaToCsv(context: Context, balitaList: List<Balita>): File? {
             return try {
                 val fileName = "data_balita_${SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())}.csv"
-                val file = File(context.getExternalFilesDir(null), fileName)
+                val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                if (!downloadsDir.exists()) downloadsDir.mkdirs()
+                val file = File(downloadsDir, fileName)
                 
                 val writer = CSVWriter(FileWriter(file))
                 

@@ -1,6 +1,7 @@
 package com.example.e_posyandu.util
 
 import android.content.Context
+import android.os.Environment
 import android.util.Log
 import com.example.e_posyandu.data.model.Balita
 import org.apache.poi.ss.usermodel.*
@@ -20,7 +21,7 @@ class ExcelExporter {
             
             val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
             val fileName = "laporan_balita_$timestamp.xlsx"
-            val downloadsDir = File(context.getExternalFilesDir(null), "Downloads")
+            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             
             if (!downloadsDir.exists()) {
                 downloadsDir.mkdirs()
