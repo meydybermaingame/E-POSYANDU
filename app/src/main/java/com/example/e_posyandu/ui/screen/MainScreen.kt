@@ -22,6 +22,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.e_posyandu.ui.theme.EPOSYANDUTheme
+import com.example.e_posyandu.ui.utils.rememberResponsiveValues
+import com.example.e_posyandu.ui.theme.LocalThemeManager
 
 /**
  * Destination enum untuk bottom navigation
@@ -87,6 +89,8 @@ fun MainScreen() {
 private fun MainScreenContent(navController: NavHostController) {
     val startDestination = Destination.HOME
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
+    val responsive = rememberResponsiveValues()
+    val themeManager = LocalThemeManager.current
     
     Box(modifier = Modifier.fillMaxSize()) {
         // Main content
@@ -107,7 +111,7 @@ private fun MainScreenContent(navController: NavHostController) {
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
                 shadowElevation = 12.dp,
-                color = Color.White
+                color = if (themeManager.isDarkMode) MaterialTheme.colorScheme.surfaceContainer else Color.White
             ) {
                 BottomAppBar(
                     containerColor = Color.Transparent,
@@ -144,12 +148,12 @@ private fun MainScreenContent(navController: NavHostController) {
                                         MaterialTheme.colorScheme.primary 
                                     else 
                                         MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                                    modifier = Modifier.size(24.dp)
+                                    modifier = Modifier.size(responsive.navIconSize)
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = "Home",
-                                    fontSize = 10.sp,
+                                    fontSize = responsive.navFontSize.sp,
                                     color = if (selectedDestination == Destination.HOME.ordinal) 
                                         MaterialTheme.colorScheme.primary 
                                     else 
@@ -180,12 +184,12 @@ private fun MainScreenContent(navController: NavHostController) {
                                         MaterialTheme.colorScheme.primary 
                                     else 
                                         MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                                    modifier = Modifier.size(24.dp)
+                                    modifier = Modifier.size(responsive.navIconSize)
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = "Data",
-                                    fontSize = 10.sp,
+                                    fontSize = responsive.navFontSize.sp,
                                     color = if (selectedDestination == Destination.DATA_BALITA.ordinal) 
                                         MaterialTheme.colorScheme.primary 
                                     else 
@@ -216,12 +220,12 @@ private fun MainScreenContent(navController: NavHostController) {
                                         MaterialTheme.colorScheme.primary 
                                     else 
                                         MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                                    modifier = Modifier.size(24.dp)
+                                    modifier = Modifier.size(responsive.navIconSize)
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = "Input",
-                                    fontSize = 10.sp,
+                                    fontSize = responsive.navFontSize.sp,
                                     color = if (selectedDestination == Destination.INPUT.ordinal) 
                                         MaterialTheme.colorScheme.primary 
                                     else 
@@ -252,12 +256,12 @@ private fun MainScreenContent(navController: NavHostController) {
                                         MaterialTheme.colorScheme.primary 
                                     else 
                                         MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                                    modifier = Modifier.size(24.dp)
+                                    modifier = Modifier.size(responsive.navIconSize)
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = "Tumbuh",
-                                    fontSize = 10.sp,
+                                    fontSize = responsive.navFontSize.sp,
                                     color = if (selectedDestination == Destination.GROWTH.ordinal) 
                                         MaterialTheme.colorScheme.primary 
                                     else 

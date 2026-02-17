@@ -14,7 +14,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.e_posyandu.ui.screen.MainScreen
 import com.example.e_posyandu.ui.theme.EPOSYANDUTheme
+import com.example.e_posyandu.ui.theme.ThemeManager
+import com.example.e_posyandu.ui.theme.LocalThemeManager
 import com.google.firebase.FirebaseApp
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,12 +30,15 @@ class MainActivity : ComponentActivity() {
         ensureBlePermissions()
         
         setContent {
-            EPOSYANDUTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    MainScreen()
+            val themeManager = remember { ThemeManager() }
+            CompositionLocalProvider(LocalThemeManager provides themeManager) {
+                EPOSYANDUTheme(darkTheme = themeManager.isDarkMode) {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        MainScreen()
+                    }
                 }
             }
         }

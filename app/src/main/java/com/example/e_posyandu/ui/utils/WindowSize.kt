@@ -19,7 +19,17 @@ data class ResponsiveValues(
     val menuItemHeight: Dp,      // Menu card height: 160dp portrait, 120dp landscape
     val chartHeight: Dp,         // Chart height: 500dp portrait, 400dp landscape
     val isLandscape: Boolean,
-    val isTablet: Boolean
+    val isTablet: Boolean,
+    // Additional adaptive properties
+    val contentPadding: Dp,      // Inner content padding
+    val buttonHeight: Dp,        // Standard button height
+    val topBarTitleSize: Int,    // TopAppBar title font size
+    val bodyFontSize: Int,       // Body text font size
+    val contentMaxWidth: Dp,     // Max width for form/content on large screens
+    val navIconSize: Dp,         // Bottom nav icon size
+    val navFontSize: Int,        // Bottom nav label font size
+    val smallIconSize: Dp,       // Small icon (status indicators etc.)
+    val cardCornerRadius: Dp     // Card corner radius
 )
 
 /**
@@ -49,7 +59,16 @@ fun rememberResponsiveValues(): ResponsiveValues {
             menuItemHeight = 160.dp,
             chartHeight = 500.dp,
             isLandscape = false,
-            isTablet = false
+            isTablet = false,
+            contentPadding = 16.dp,
+            buttonHeight = 48.dp,
+            topBarTitleSize = 18,
+            bodyFontSize = 14,
+            contentMaxWidth = Dp.Unspecified,
+            navIconSize = 24.dp,
+            navFontSize = 10,
+            smallIconSize = 20.dp,
+            cardCornerRadius = 12.dp
         )
         
         // Medium: Tablet Portrait or Phone Landscape
@@ -64,7 +83,16 @@ fun rememberResponsiveValues(): ResponsiveValues {
             menuItemHeight = if (isLandscape) 120.dp else 160.dp,
             chartHeight = if (isLandscape) 400.dp else 500.dp,
             isLandscape = isLandscape,
-            isTablet = screenWidth >= 600.dp
+            isTablet = screenWidth >= 600.dp,
+            contentPadding = 24.dp,
+            buttonHeight = 52.dp,
+            topBarTitleSize = 20,
+            bodyFontSize = 15,
+            contentMaxWidth = 600.dp,
+            navIconSize = 26.dp,
+            navFontSize = 11,
+            smallIconSize = 22.dp,
+            cardCornerRadius = 16.dp
         )
         
         // Expanded: Tablet Landscape
@@ -79,7 +107,17 @@ fun rememberResponsiveValues(): ResponsiveValues {
             menuItemHeight = 140.dp,
             chartHeight = 450.dp,
             isLandscape = true,
-            isTablet = true
+            isTablet = true,
+            contentPadding = 32.dp,
+            buttonHeight = 56.dp,
+            topBarTitleSize = 22,
+            bodyFontSize = 16,
+            contentMaxWidth = 800.dp,
+            navIconSize = 28.dp,
+            navFontSize = 12,
+            smallIconSize = 24.dp,
+            cardCornerRadius = 20.dp
         )
     }
 }
+

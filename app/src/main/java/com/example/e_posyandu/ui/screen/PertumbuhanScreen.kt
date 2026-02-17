@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.e_posyandu.data.repository.Balita
 import com.example.e_posyandu.ui.component.KmsChart
 import com.example.e_posyandu.ui.viewmodel.BalitaViewModel
+import com.example.e_posyandu.ui.utils.rememberResponsiveValues
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.e_posyandu.ui.theme.EPOSYANDUTheme
 
@@ -49,6 +50,7 @@ private fun PertumbuhanScreenContent(
     isLoading: Boolean,
     onNavigateBack: () -> Unit
 ) {
+    val responsive = rememberResponsiveValues()
     var searchQuery by remember { mutableStateOf("") }
     var selectedBalita by remember { mutableStateOf<Balita?>(null) }
     
@@ -89,7 +91,7 @@ private fun PertumbuhanScreenContent(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(responsive.contentPadding),
                 singleLine = true
             )
 
@@ -118,8 +120,8 @@ private fun PertumbuhanScreenContent(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    contentPadding = PaddingValues(responsive.contentPadding),
+                    verticalArrangement = Arrangement.spacedBy(responsive.cardSpacing)
                 ) {
                     items(filteredBalitaList) { balita ->
                         BalitaGrowthCard(
@@ -151,8 +153,8 @@ private fun FullscreenChartView(
     balita: Balita,
     onDismiss: () -> Unit
 ) {
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+    val responsive = rememberResponsiveValues()
+    val isLandscape = responsive.isLandscape
     
     Scaffold(
         topBar = {
@@ -197,7 +199,7 @@ private fun FullscreenChartView(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(responsive.contentPadding),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer
                     )
@@ -223,7 +225,7 @@ private fun FullscreenChartView(
                 // Growth chart
                 KmsChart(
                     riwayatList = balita.riwayat.toRiwayatModelList(),
-                    height = 500.dp,  // Fixed height for portrait
+                    height = responsive.chartHeight,  // Responsive height for portrait
                     title = "Grafik Pertumbuhan KMS",
                     jenisKelamin = if (balita.jenisKelamin.contains("Laki", ignoreCase = true)) "L" else "P",
                     tanggalLahir = balita.tanggalLahir

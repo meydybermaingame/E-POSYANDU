@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.e_posyandu.ui.theme.EPOSYANDUTheme
 import com.example.e_posyandu.ui.utils.rememberResponsiveValues
+import com.example.e_posyandu.ui.theme.LocalThemeManager
 import com.example.e_posyandu.ui.viewmodel.BalitaViewModel
 import androidx.compose.ui.platform.LocalContext
 import com.example.e_posyandu.data.repository.BleRepository
@@ -77,6 +78,7 @@ fun HomeScreen(
     
     // Responsive values for adaptive layout
     val responsiveValues = rememberResponsiveValues()
+    val themeManager = LocalThemeManager.current
     
     // Determine connection state
     val isConnected = connectionStatus == "connected"
@@ -147,6 +149,7 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues)
                 .background(
                     Brush.verticalGradient(
                         listOf(
@@ -242,12 +245,13 @@ fun HomeScreen(
                     }
                 }
                 
-                // Profile/Admin picture
+                // Dark/Light Mode Toggle
                 Card(
                     modifier = Modifier
                         .padding(end = 16.dp)
                         .size(48.dp)
-                        .shadow(8.dp, CircleShape),
+                        .shadow(8.dp, CircleShape)
+                        .clickable { themeManager.toggleTheme() },
                     shape = CircleShape,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface
@@ -258,8 +262,11 @@ fun HomeScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Admin Profile",
+                            imageVector = if (themeManager.isDarkMode)
+                                Icons.Default.LightMode
+                            else
+                                Icons.Default.DarkMode,
+                            contentDescription = if (themeManager.isDarkMode) "Light Mode" else "Dark Mode",
                             modifier = Modifier.size(28.dp),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -780,8 +787,8 @@ fun HomeScreenContent(
             .background(
                 Brush.verticalGradient(
                     listOf(
-                        Color(0xFF006064),
-                        Color(0xFF00695C)
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.tertiary
                     )
                 )
             )
@@ -861,7 +868,7 @@ fun HomeScreenContent(
                         .shadow(8.dp, CircleShape),
                     shape = CircleShape,
                     colors = CardDefaults.cardColors(
-                        containerColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.surface
                     )
                 ) {
                     Box(
@@ -872,13 +879,13 @@ fun HomeScreenContent(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Admin Profile",
                             modifier = Modifier.size(28.dp),
-                            tint = Color(0xFF006064)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color(0xFF006064)
+                containerColor = MaterialTheme.colorScheme.primary
             )
         )
         
@@ -1097,7 +1104,7 @@ fun HomeScreenContent(
                             ),
                         shape = RoundedCornerShape(20.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.White
+                            containerColor = MaterialTheme.colorScheme.surface
                         )
                     ) {
                         Box(

@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.e_posyandu.data.repository.Balita
 import com.example.e_posyandu.data.repository.SensorData
 import com.example.e_posyandu.ui.viewmodel.BalitaViewModel
+import com.example.e_posyandu.ui.utils.rememberResponsiveValues
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -148,12 +149,13 @@ private fun InputBalitaScreenContent(
     onTakeTinggi: () -> Unit
 ) {
     val isConnected = sensorData?.connectionStatus == "connected"
+    val responsive = rememberResponsiveValues()
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { 
-                    Text("Input Data Balita", fontWeight = FontWeight.Bold, fontSize = 20.sp) 
+                    Text("Input Data Balita", fontWeight = FontWeight.Bold, fontSize = responsive.topBarTitleSize.sp) 
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
@@ -161,9 +163,9 @@ private fun InputBalitaScreenContent(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF006064),
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         }
@@ -173,18 +175,18 @@ private fun InputBalitaScreenContent(
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        listOf(Color(0xFF006064), Color(0xFF00695C))
+                        listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.tertiary)
                     )
                 )
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(responsive.contentPadding),
+            verticalArrangement = Arrangement.spacedBy(responsive.cardSpacing)
         ) {
             // Title Card
             Card(
                 modifier = Modifier.fillMaxWidth().shadow(8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp).fillMaxWidth(),
@@ -201,7 +203,7 @@ private fun InputBalitaScreenContent(
                         text = "Form Pendaftaran Balita",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF006064)
+                        color = MaterialTheme.colorScheme.primary
                     )
                     Text(
                         text = "Masukkan data balita dengan lengkap",
@@ -245,9 +247,9 @@ private fun InputBalitaScreenContent(
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Icon(Icons.Default.Scale, null, tint = Color(0xFF006064))
+                                Icon(Icons.Default.Scale, null, tint = MaterialTheme.colorScheme.primary)
                                 Text("Berat", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
-                                Text("${sensorData.berat} kg", fontWeight = FontWeight.Bold, color = Color(0xFF006064))
+                                Text("${sensorData.berat} kg", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(Icons.Default.Straighten, null, tint = Color(0xFF667eea))
@@ -262,7 +264,7 @@ private fun InputBalitaScreenContent(
             // Form Fields Card
             Card(
                 modifier = Modifier.fillMaxWidth().shadow(8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp),
@@ -345,7 +347,7 @@ private fun InputBalitaScreenContent(
             // Growth Data Card
             Card(
                 modifier = Modifier.fillMaxWidth().shadow(8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp),
@@ -474,17 +476,17 @@ private fun InputBalitaScreenContent(
             ) {
                 Button(
                     onClick = onSubmit,
-                    modifier = Modifier.fillMaxWidth(0.8f).height(56.dp).shadow(8.dp),
+                    modifier = Modifier.fillMaxWidth(0.8f).height(responsive.buttonHeight).shadow(8.dp),
                     enabled = namaBalita.isNotEmpty() && usia.isNotEmpty() && 
                              beratBadan.isNotEmpty() && tinggiBadan.isNotEmpty() && !isLoading,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (namaBalita.isNotEmpty() && usia.isNotEmpty() && 
                                            beratBadan.isNotEmpty() && tinggiBadan.isNotEmpty() && !isLoading)
-                            Color(0xFF006064) else Color.Gray
+                            MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
                     )
                 ) {
                     if (isLoading) {
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
                     } else {
                         Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(24.dp))
                         Spacer(modifier = Modifier.width(8.dp))

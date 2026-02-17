@@ -17,6 +17,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.e_posyandu.data.repository.Balita
 import com.example.e_posyandu.data.repository.SensorData
 import com.example.e_posyandu.ui.viewmodel.BalitaViewModel
+import com.example.e_posyandu.ui.utils.rememberResponsiveValues
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.e_posyandu.ui.theme.EPOSYANDUTheme
 import com.example.e_posyandu.ui.preview.PreviewSampleData
@@ -129,6 +130,7 @@ private fun EditBalitaScreenContent(
     onTakeBerat: () -> Unit,
     onTakeTinggi: () -> Unit
 ) {
+    val responsive = rememberResponsiveValues()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -154,8 +156,8 @@ private fun EditBalitaScreenContent(
                     .fillMaxSize()
                     .padding(paddingValues)
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(responsive.contentPadding),
+                verticalArrangement = Arrangement.spacedBy(responsive.cardSpacing)
             ) {
                 Text(
                     text = "Edit Data Balita",
@@ -324,7 +326,7 @@ private fun EditBalitaScreenContent(
                 // Update button
                 Button(
                     onClick = onUpdate,
-                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    modifier = Modifier.fillMaxWidth().height(responsive.buttonHeight),
                     enabled = usia.isNotEmpty() && beratBadan.isNotEmpty() && 
                              tinggiBadan.isNotEmpty() && !isLoading
                 ) {

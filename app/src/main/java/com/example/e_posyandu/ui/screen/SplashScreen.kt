@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.e_posyandu.ui.theme.EPOSYANDUTheme
+import com.example.e_posyandu.ui.utils.rememberResponsiveValues
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalTextApi::class, ExperimentalAnimationApi::class)
@@ -31,6 +32,7 @@ import kotlinx.coroutines.delay
 fun SplashScreen(
     onSplashComplete: () -> Unit
 ) {
+    val responsive = rememberResponsiveValues()
     var showLogo by remember { mutableStateOf(false) }
     var showTitle by remember { mutableStateOf(false) }
     var showSubtitle by remember { mutableStateOf(false) }
@@ -83,9 +85,9 @@ fun SplashScreen(
             .background(
                 Brush.radialGradient(
                     colors = listOf(
-                        Color(0xFF00BCD4),
-                        Color(0xFF006064),
-                        Color(0xFF004D40)
+                        MaterialTheme.colorScheme.secondary,
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.tertiary
                     ),
                     radius = 1000f
                 )
@@ -128,18 +130,18 @@ fun SplashScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(32.dp),
+                .padding(responsive.horizontalPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             // Animated logo container
             Card(
                 modifier = Modifier
-                    .size(140.dp)
+                    .size(if (responsive.isTablet) 180.dp else 140.dp)
                     .scale(logoScale)
                     .rotate(logoRotation * 0.3f),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.surface
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
                 shape = RoundedCornerShape(28.dp)
@@ -151,12 +153,12 @@ fun SplashScreen(
                     // Gradient background for icon
                     Box(
                         modifier = Modifier
-                            .size(100.dp)
+                            .size(if (responsive.isTablet) 130.dp else 100.dp)
                             .background(
                                 Brush.linearGradient(
                                     colors = listOf(
-                                        Color(0xFF00BCD4),
-                                        Color(0xFF006064)
+                                        MaterialTheme.colorScheme.secondary,
+                                        MaterialTheme.colorScheme.primary
                                     )
                                 ),
                                 CircleShape
@@ -166,7 +168,7 @@ fun SplashScreen(
                         Icon(
                             imageVector = Icons.Default.LocalHospital,
                             contentDescription = "E-Posyandu Logo",
-                            modifier = Modifier.size(50.dp),
+                            modifier = Modifier.size(if (responsive.isTablet) 65.dp else 50.dp),
                             tint = Color.White
                         )
                     }
@@ -182,7 +184,7 @@ fun SplashScreen(
                 style = MaterialTheme.typography.headlineLarge.copy(
                     color = Color.White,
                     fontWeight = FontWeight.ExtraBold,
-                    fontSize = 32.sp,
+                    fontSize = responsive.titleFontSize.sp,
                     letterSpacing = 2.sp
                 ),
                 textAlign = TextAlign.Center
@@ -196,7 +198,7 @@ fun SplashScreen(
                     .alpha(subtitleAlpha)
                     .padding(horizontal = 16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.15f)
+                    containerColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.15f)
                 ),
                 shape = RoundedCornerShape(20.dp)
             ) {
@@ -206,7 +208,7 @@ fun SplashScreen(
                     style = MaterialTheme.typography.bodyLarge.copy(
                         color = Color.White,
                         fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp
+                        fontSize = responsive.bodyFontSize.sp
                     ),
                     textAlign = TextAlign.Center
                 )
@@ -252,9 +254,9 @@ fun SplashScreenContent() {
             .background(
                 Brush.radialGradient(
                     colors = listOf(
-                        Color(0xFF00BCD4),
-                        Color(0xFF006064),
-                        Color(0xFF004D40)
+                        MaterialTheme.colorScheme.secondary,
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.tertiary
                     ),
                     radius = 1000f
                 )
@@ -270,7 +272,7 @@ fun SplashScreenContent() {
         ) {
             Card(
                 modifier = Modifier.size(140.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
                 shape = RoundedCornerShape(28.dp)
             ) {
@@ -283,7 +285,7 @@ fun SplashScreenContent() {
                             .size(100.dp)
                             .background(
                                 Brush.linearGradient(
-                                    colors = listOf(Color(0xFF00BCD4), Color(0xFF006064))
+                                    colors = listOf(MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.primary)
                                 ),
                                 CircleShape
                             ),
@@ -316,7 +318,7 @@ fun SplashScreenContent() {
             
             Card(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.15f)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.15f)),
                 shape = RoundedCornerShape(20.dp)
             ) {
                 Text(

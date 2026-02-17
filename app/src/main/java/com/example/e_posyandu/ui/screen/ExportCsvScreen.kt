@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.e_posyandu.data.repository.Balita
 import com.example.e_posyandu.ui.viewmodel.BalitaViewModel
+import com.example.e_posyandu.ui.utils.rememberResponsiveValues
 import android.os.Environment
 import java.io.File
 import java.io.FileOutputStream
@@ -75,6 +76,7 @@ private fun ExportCsvScreenContent(
     onNavigateBack: () -> Unit,
     onExport: () -> Unit
 ) {
+    val responsive = rememberResponsiveValues()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -85,9 +87,9 @@ private fun ExportCsvScreenContent(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF006064),
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         }
@@ -97,8 +99,8 @@ private fun ExportCsvScreenContent(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(responsive.contentPadding),
+            verticalArrangement = Arrangement.spacedBy(responsive.cardSpacing)
         ) {
             // Info Card
             Card(
@@ -264,7 +266,7 @@ private fun ExportCsvScreenContent(
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 enabled = balitaList.isNotEmpty() && exportStatus !is ExportStatus.Exporting,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF006064)
+                    containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
                 Icon(Icons.Default.Download, contentDescription = null)

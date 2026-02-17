@@ -20,6 +20,7 @@ import com.example.e_posyandu.ui.component.KmsChart
 import com.example.e_posyandu.ui.theme.EPOSYANDUTheme
 import com.example.e_posyandu.ui.viewmodel.BalitaViewModel
 import com.example.e_posyandu.ui.preview.PreviewSampleData
+import com.example.e_posyandu.ui.utils.rememberResponsiveValues
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,8 +93,8 @@ private fun DetailBalitaScreenContent(
                         .fillMaxSize()
                         .padding(paddingValues)
                         .verticalScroll(rememberScrollState())
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                        .padding(rememberResponsiveValues().contentPadding),
+                    verticalArrangement = Arrangement.spacedBy(rememberResponsiveValues().cardSpacing)
                 ) {
                     Text(
                         text = "Detail Data Balita",
@@ -193,7 +194,7 @@ private fun DetailBalitaScreenContent(
                         // Growth chart
                         KmsChart(
                             riwayatList = balita.riwayat.toRiwayatModelList(),
-                            height = 500.dp,  // Fixed height
+                            height = rememberResponsiveValues().chartHeight,
                             title = "Grafik Pertumbuhan KMS ${balita.nama}",
                             jenisKelamin = if (balita.jenisKelamin.contains("Laki", ignoreCase = true)) "L" else "P",
                             tanggalLahir = balita.tanggalLahir

@@ -22,9 +22,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.e_posyandu.data.repository.Balita
 import com.example.e_posyandu.ui.component.BalitaItem
 import com.example.e_posyandu.ui.viewmodel.BalitaViewModel
+import com.example.e_posyandu.ui.utils.rememberResponsiveValues
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.e_posyandu.ui.theme.EPOSYANDUTheme
 import com.example.e_posyandu.ui.preview.PreviewSampleData
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,6 +71,7 @@ private fun DataBalitaScreenContent(
     onNavigateToEdit: (String) -> Unit,
     onDeleteBalita: (String) -> Unit
 ) {
+    val responsive = rememberResponsiveValues()
     var searchQuery by remember { mutableStateOf("") }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var balitaToDelete by remember { mutableStateOf<Balita?>(null) }
@@ -103,9 +106,9 @@ private fun DataBalitaScreenContent(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF006064),
-                    titleContentColor = Color.White,
-                    actionIconContentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         }
@@ -115,7 +118,7 @@ private fun DataBalitaScreenContent(
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        listOf(Color(0xFF006064), Color(0xFF00695C))
+                        listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.tertiary)
                     )
                 )
                 .padding(paddingValues)
@@ -124,21 +127,21 @@ private fun DataBalitaScreenContent(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(responsive.contentPadding)
                     .shadow(8.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
                     label = { Text("Cari balita...") },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-                    modifier = Modifier.fillMaxWidth().padding(12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(responsive.cardSpacing),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF006064),
-                        unfocusedBorderColor = Color.Gray
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     )
                 )
             }
@@ -192,10 +195,10 @@ private fun DataBalitaScreenContent(
                         Card(
                             modifier = Modifier.padding(16.dp).shadow(8.dp),
                             shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White)
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                         ) {
                             Column(modifier = Modifier.padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                                CircularProgressIndicator(color = Color(0xFF006064), modifier = Modifier.size(48.dp))
+                                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary, modifier = Modifier.size(48.dp))
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text("Memuat data...", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
                             }
@@ -207,7 +210,7 @@ private fun DataBalitaScreenContent(
                         Card(
                             modifier = Modifier.padding(16.dp).shadow(8.dp),
                             shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White)
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                         ) {
                             Column(modifier = Modifier.padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(
@@ -242,16 +245,16 @@ private fun DataBalitaScreenContent(
                 else -> {
                     // Statistics Card - Compact
                     Card(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).shadow(4.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = responsive.contentPadding).shadow(4.dp),
+                        shape = RoundedCornerShape(responsive.cardCornerRadius),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(12.dp),
+                            modifier = Modifier.fillMaxWidth().padding(responsive.cardSpacing),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("${filteredBalitaList.size}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color(0xFF006064))
+                                Text("${filteredBalitaList.size}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                                 Text("Total Balita", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -265,13 +268,13 @@ private fun DataBalitaScreenContent(
                         }
                     }
                     
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(responsive.cardSpacing))
                     
                     // Balita List
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        contentPadding = PaddingValues(horizontal = responsive.contentPadding, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(responsive.cardSpacing)
                     ) {
                         items(filteredBalitaList) { balita ->
                             BalitaItem(
@@ -309,8 +312,8 @@ private fun DataBalitaScreenContent(
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false; balitaToDelete = null }) { Text("Batal") }
             },
-            containerColor = Color.White,
-            shape = RoundedCornerShape(16.dp)
+            containerColor = MaterialTheme.colorScheme.surface,
+            shape = RoundedCornerShape(responsive.cardCornerRadius)
         )
     }
 }
