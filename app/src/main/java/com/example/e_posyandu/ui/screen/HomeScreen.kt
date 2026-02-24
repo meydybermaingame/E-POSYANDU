@@ -466,14 +466,46 @@ fun HomeScreen(
                         .padding(horizontal = responsiveValues.horizontalPadding),
                     horizontalArrangement = Arrangement.spacedBy(responsiveValues.cardSpacing)
                 ) {
-                    rowItems.forEach { menu ->
-                        AnimatedVisibility(
-                            visible = true,
-                            enter = fadeIn() + expandVertically(),
-                            modifier = Modifier.weight(1f)
+                    rowItems.forEachIndexed { index, menu ->
+                        // Staggered animation state untuk tiap item
+                        var isMuncul by remember { mutableStateOf(false) }
+                        LaunchedEffect(Unit) {
+                            isMuncul = true
+                        }
+                        // Delay berurutan tiap item (ala GSAP stagger: 0.12)
+                        val delayMs = index * 120
+
+                        // Fade in
+                        val cardAlpha by animateFloatAsState(
+                            targetValue = if (isMuncul) 1f else 0f,
+                            animationSpec = tween(
+                                durationMillis = 450,
+                                delayMillis = delayMs,
+                                easing = FastOutSlowInEasing
+                            ),
+                            label = "cardAlpha_$index"
+                        )
+                        // Slide up dari bawah dengan back.out curve persis GSAP
+                        val cardOffsetY by animateFloatAsState(
+                            targetValue = if (isMuncul) 0f else 80f,
+                            animationSpec = tween(
+                                durationMillis = 650,
+                                delayMillis = delayMs,
+                                easing = CubicBezierEasing(0.175f, 0.885f, 0.32f, 1.275f)
+                            ),
+                            label = "cardOffsetY_$index"
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .graphicsLayer {
+                                    alpha = cardAlpha
+                                    translationY = cardOffsetY
+                                }
                         ) {
                             Card(
-                                onClick = { 
+                                onClick = {
                                     if (menu.label == "Data Demo") {
                                         showDummyDataDialog = true
                                     } else {

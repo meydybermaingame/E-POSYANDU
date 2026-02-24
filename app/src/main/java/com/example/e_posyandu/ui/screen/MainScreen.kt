@@ -1,5 +1,8 @@
 package com.example.e_posyandu.ui.screen
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,6 +69,55 @@ enum class Destination(
         icon = Icons.Default.Download,
         contentDescription = "Export Screen"
     )
+}
+
+/**
+ * Reusable animatable nav item: icon + label that lifts upward when selected.
+ */
+@Composable
+private fun AnimatedNavItem(
+    destination: Destination,
+    isSelected: Boolean,
+    iconSize: androidx.compose.ui.unit.Dp,
+    labelFontSize: Int,
+    onClick: () -> Unit
+) {
+    // Animate vertical offset: -16dp when selected, 0dp when not
+    val offsetY by animateFloatAsState(
+        targetValue = if (isSelected) -16f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "navItemOffset"
+    )
+
+    val alpha by animateFloatAsState(
+        targetValue = if (isSelected) 1f else 0.4f,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+        label = "navItemAlpha"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .graphicsLayer { translationY = offsetY }
+    ) {
+        Icon(
+            destination.icon,
+            contentDescription = destination.contentDescription,
+            tint = MaterialTheme.colorScheme.primary.copy(alpha = alpha),
+            modifier = Modifier.size(iconSize)
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = destination.label,
+            fontSize = labelFontSize.sp,
+            color = MaterialTheme.colorScheme.primary.copy(alpha = alpha)
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,149 +178,46 @@ private fun MainScreenContent(navController: NavHostController) {
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Home
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .clickable {
-                                        navController.navigate(route = Destination.HOME.route) {
-                                            popUpTo(startDestination.route) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                        selectedDestination = Destination.HOME.ordinal
-                                    }
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    Destination.HOME.icon,
-                                    contentDescription = Destination.HOME.contentDescription,
-                                    tint = if (selectedDestination == Destination.HOME.ordinal) 
-                                        MaterialTheme.colorScheme.primary 
-                                    else 
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                                    modifier = Modifier.size(responsive.navIconSize)
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Home",
-                                    fontSize = responsive.navFontSize.sp,
-                                    color = if (selectedDestination == Destination.HOME.ordinal) 
-                                        MaterialTheme.colorScheme.primary 
-                                    else 
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
-                                )
+                            fun navigate(dest: Destination) {
+                                navController.navigate(dest.route) {
+                                    popUpTo(startDestination.route) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                                selectedDestination = dest.ordinal
                             }
-                            
-                            // Data Balita
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .clickable {
-                                        navController.navigate(route = Destination.DATA_BALITA.route) {
-                                            popUpTo(startDestination.route) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                        selectedDestination = Destination.DATA_BALITA.ordinal
-                                    }
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    Destination.DATA_BALITA.icon,
-                                    contentDescription = Destination.DATA_BALITA.contentDescription,
-                                    tint = if (selectedDestination == Destination.DATA_BALITA.ordinal) 
-                                        MaterialTheme.colorScheme.primary 
-                                    else 
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                                    modifier = Modifier.size(responsive.navIconSize)
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Data",
-                                    fontSize = responsive.navFontSize.sp,
-                                    color = if (selectedDestination == Destination.DATA_BALITA.ordinal) 
-                                        MaterialTheme.colorScheme.primary 
-                                    else 
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
-                                )
-                            }
-                            
-                            // Input Balita
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .clickable {
-                                        navController.navigate(route = Destination.INPUT.route) {
-                                            popUpTo(startDestination.route) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                        selectedDestination = Destination.INPUT.ordinal
-                                    }
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    Destination.INPUT.icon,
-                                    contentDescription = Destination.INPUT.contentDescription,
-                                    tint = if (selectedDestination == Destination.INPUT.ordinal) 
-                                        MaterialTheme.colorScheme.primary 
-                                    else 
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                                    modifier = Modifier.size(responsive.navIconSize)
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Input",
-                                    fontSize = responsive.navFontSize.sp,
-                                    color = if (selectedDestination == Destination.INPUT.ordinal) 
-                                        MaterialTheme.colorScheme.primary 
-                                    else 
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
-                                )
-                            }
-                            
-                            // Growth/Pertumbuhan
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .clickable {
-                                        navController.navigate(route = Destination.GROWTH.route) {
-                                            popUpTo(startDestination.route) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                        selectedDestination = Destination.GROWTH.ordinal
-                                    }
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    Destination.GROWTH.icon,
-                                    contentDescription = Destination.GROWTH.contentDescription,
-                                    tint = if (selectedDestination == Destination.GROWTH.ordinal) 
-                                        MaterialTheme.colorScheme.primary 
-                                    else 
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                                    modifier = Modifier.size(responsive.navIconSize)
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Tumbuh",
-                                    fontSize = responsive.navFontSize.sp,
-                                    color = if (selectedDestination == Destination.GROWTH.ordinal) 
-                                        MaterialTheme.colorScheme.primary 
-                                    else 
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
-                                )
-                            }
+
+                            AnimatedNavItem(
+                                destination = Destination.DATA_BALITA,
+                                isSelected = selectedDestination == Destination.DATA_BALITA.ordinal,
+                                iconSize = responsive.navIconSize,
+                                labelFontSize = responsive.navFontSize,
+                                onClick = { navigate(Destination.DATA_BALITA) }
+                            )
+
+                            AnimatedNavItem(
+                                destination = Destination.INPUT,
+                                isSelected = selectedDestination == Destination.INPUT.ordinal,
+                                iconSize = responsive.navIconSize,
+                                labelFontSize = responsive.navFontSize,
+                                onClick = { navigate(Destination.INPUT) }
+                            )
+
+                            AnimatedNavItem(
+                                destination = Destination.HOME,
+                                isSelected = selectedDestination == Destination.HOME.ordinal,
+                                iconSize = responsive.navIconSize,
+                                labelFontSize = responsive.navFontSize,
+                                onClick = { navigate(Destination.HOME) }
+                            )
+
+                            AnimatedNavItem(
+                                destination = Destination.GROWTH,
+                                isSelected = selectedDestination == Destination.GROWTH.ordinal,
+                                iconSize = responsive.navIconSize,
+                                labelFontSize = responsive.navFontSize,
+                                onClick = { navigate(Destination.GROWTH) }
+                            )
                         }
                     },
                 floatingActionButton = {

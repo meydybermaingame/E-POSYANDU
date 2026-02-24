@@ -13,102 +13,80 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 /**
- * Dark Color Scheme - Material3 dengan complete color roles
+ * Dark Color Scheme
  */
 private val DarkColorScheme = darkColorScheme(
-    // Primary colors
-    primary = Teal80,
-    onPrimary = Teal10,
-    primaryContainer = Teal30,
-    onPrimaryContainer = Teal90,
+    primary = PrimaryAccent,
+    onPrimary = Color(0xFF003920),
+    primaryContainer = PrimaryBase,
+    onPrimaryContainer = SecondaryPalette,
     
-    // Secondary colors
-    secondary = Mint80,
-    onSecondary = Mint10,
-    secondaryContainer = Mint30,
-    onSecondaryContainer = Mint90,
+    secondary = PrimaryBase,
+    onSecondary = SecondaryPalette,
+    secondaryContainer = PrimaryBase.copy(alpha = 0.7f),
+    onSecondaryContainer = PrimaryAccent,
     
-    // Tertiary colors
-    tertiary = Ocean80,
-    onTertiary = Ocean10,
-    tertiaryContainer = Ocean30,
-    onTertiaryContainer = Ocean90,
+    tertiary = ComplementaryAccent,
+    onTertiary = Color(0xFF1E282D),
+    tertiaryContainer = ComplementaryAccent.copy(alpha = 0.3f),
+    onTertiaryContainer = SecondaryPalette,
     
-    // Error colors
     error = Error80,
     onError = Color(0xFF690005),
     errorContainer = Color(0xFF93000A),
     onErrorContainer = Error90,
     
-    // Surface colors
     background = Color(0xFF121212),
-    onBackground = Neutral90,
+    onBackground = SecondaryPalette,
     surface = Color(0xFF1A1C1E),
-    onSurface = Neutral90,
+    onSurface = SecondaryPalette,
     surfaceVariant = Color(0xFF3F4948),
-    onSurfaceVariant = Color(0xFFBEC9C7),
+    onSurfaceVariant = ComplementaryAccent,
     
-    // Outline
-    outline = Color(0xFF6F7978),
-    outlineVariant = Color(0xFF3F4948),
-    
-    // Inverse colors
-    inverseSurface = Neutral90,
-    inverseOnSurface = Neutral10,
-    inversePrimary = Teal40
+    outline = ComplementaryAccent,
+    outlineVariant = ComplementaryAccent.copy(alpha = 0.5f)
 )
 
 /**
- * Light Color Scheme - Material3 dengan complete color roles
+ * Light Color Scheme
  */
 private val LightColorScheme = lightColorScheme(
-    // Primary colors
-    primary = Teal40,
+    primary = PrimaryBase,
     onPrimary = Color.White,
-    primaryContainer = Teal90,
-    onPrimaryContainer = Teal10,
+    primaryContainer = PrimaryBase.copy(alpha = 0.1f),
+    onPrimaryContainer = PrimaryBase,
     
-    // Secondary colors
-    secondary = Mint40,
+    secondary = PrimaryAccent,
     onSecondary = Color.White,
-    secondaryContainer = Mint90,
-    onSecondaryContainer = Mint10,
+    secondaryContainer = PrimaryAccent.copy(alpha = 0.15f),
+    onSecondaryContainer = PrimaryBase,
     
-    // Tertiary colors
-    tertiary = Ocean40,
+    tertiary = ComplementaryAccent,
     onTertiary = Color.White,
-    tertiaryContainer = Ocean90,
-    onTertiaryContainer = Ocean10,
+    tertiaryContainer = ComplementaryAccent.copy(alpha = 0.2f),
+    onTertiaryContainer = PrimaryBase,
     
-    // Error colors
     error = Error40,
     onError = Color.White,
     errorContainer = Error90,
     onErrorContainer = Color(0xFF410002),
     
-    // Surface colors
-    background = Neutral99,
-    onBackground = Neutral10,
-    surface = Neutral99,
-    onSurface = Neutral10,
-    surfaceVariant = Neutral95,
-    onSurfaceVariant = Color(0xFF3F4948),
+    background = SecondaryPalette,
+    onBackground = PrimaryBase,
+    surface = SecondaryPalette,
+    onSurface = PrimaryBase,
+    surfaceVariant = SecondaryPalette,
+    onSurfaceVariant = PrimaryBase,
     
-    // Outline
-    outline = Color(0xFF6F7978),
-    outlineVariant = Color(0xFFBEC9C7),
-    
-    // Inverse colors
-    inverseSurface = Neutral20,
-    inverseOnSurface = Neutral95,
-    inversePrimary = Teal80
+    outline = ComplementaryAccent,
+    outlineVariant = ComplementaryAccent.copy(alpha = 0.5f)
 )
 
 @Composable
 fun EPOSYANDUTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    // Set to false by default to ensure custom branding colors apply instead of Android 12+ wallpaper colors
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -124,7 +102,7 @@ fun EPOSYANDUTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        shapes = Shapes,  // ✨ Added Shapes system
+        shapes = Shapes,
         content = content
     )
 }

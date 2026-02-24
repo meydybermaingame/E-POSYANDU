@@ -2,6 +2,8 @@ package com.example.e_posyandu.ui.component
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -12,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.e_posyandu.data.repository.Balita
@@ -273,13 +276,32 @@ private fun ActionButton(
     color: Color,
     onClick: () -> Unit
 ) {
+    // Bouncy Spring Scale (ala GSAP elastic ease)
+    val interactionSource = remember { MutableInteractionSource() }
+    val isDitekan by interactionSource.collectIsPressedAsState()
+
+    val skala by animateFloatAsState(
+        targetValue = if (isDitekan) 0.85f else 1f,
+        animationSpec = spring(
+            dampingRatio = 0.4f,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "skala"
+    )
+
     Button(
         onClick = onClick,
+        interactionSource = interactionSource,
         colors = ButtonDefaults.buttonColors(
             containerColor = color
         ),
         shape = RoundedCornerShape(8.dp),
-        modifier = Modifier.padding(horizontal = 4.dp)
+        modifier = Modifier
+            .padding(horizontal = 4.dp)
+            .graphicsLayer {
+                scaleX = skala
+                scaleY = skala
+            }
     ) {
         Icon(
             imageVector = icon,
